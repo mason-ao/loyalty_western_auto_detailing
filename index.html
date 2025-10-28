@@ -1,1 +1,69 @@
-<!-- // TODO: create front end assets for page -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Loyalty Western Auto Detailing</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f2f2f2; margin: 0; padding: 0; }
+    main { max-width: 400px; margin: 50px auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);}
+    input, button { width: 100%; padding: 10px; margin: 5px 0; border-radius: 5px; border: 1px solid #ccc; }
+    button { background: #007bff; color: #fff; border: none; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    #output { margin-top: 10px; padding: 10px; background: #eee; border-radius: 5px; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Sign Up for Loyalty Rewards</h1>
+    <p>Join our program and start earning points!</p>
+
+    <form id="signupForm">
+      <input type="text" name="name" placeholder="Full Name" required />
+      <input type="email" name="email" placeholder="Email Address" required />
+      <input type="password" name="password" placeholder="Password (optional)" />
+      <button type="submit">Join Now</button>
+    </form>
+
+    <div id="output"></div>
+  </main>
+
+  <script>
+    const form = document.getElementById('signupForm');
+    const output = document.getElementById('output');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const body = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        password: formData.get('password')
+      };
+
+      try {
+        const res = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          output.style.color = 'green';
+          output.textContent = `Success! Welcome, ${data.customer.name}. Your account has been created.`;
+          form.reset();
+        } else {
+          output.style.color = 'red';
+          output.textContent = data.message || 'Signup failed.';
+        }
+      } catch (err) {
+        output.style.color = 'red';
+        output.textContent = 'Network error. Try again later.';
+      }
+    });
+  </script>
+</body>
+</html>
